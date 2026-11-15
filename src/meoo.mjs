@@ -145,6 +145,39 @@ export async function points(ak, fetchImpl = fetch) {
   return Number.isFinite(value) ? value : null;
 }
 
+// 积分批次明细（网页 Cookie）：`GET /api/mc/entitlement/get` 的
+// userPointInfo.activeGrants 按来源分类（SUBSCRIPTION / DAILY_LOGIN /
+// INVITE_REWARD…），每类下 grantDetails[] 给剩余量与 expiresDate。
+// 实测（2026-11-15）：每日登录积分有效期 **7 天**（不是当天作废），
+// 订阅/邀请奖励跟随周期（当前周期结束日过期）。
+export async function pointGrants(cookie, fetchImpl = fetch) {
+  const res = await fetchImpl(`${ORIGIN}/api/mc/entitlement/get`, {
+    headers: {
+      Cookie: String(cookie || ""),
+      Referer: `${ORIGIN}/`,
+      Accept: "application/json",
+      "User-Agent": UA,
+    },
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (res.status === 401 || res.status === 403) throw expired();
+  const body = await readJson(res);
+  const grants = body?.data?.userPointInfo?.activeGrants;
+  if (!Array.isArray(grants)) return [];
+  const out = [];
+  for (const g of grants) {
+    const source = String(g?.sourceType || "OTHER");
+    const name = String(g?.sourceTypeName || source);
+    for (const gd of Array.isArray(g?.grantDetails) ? g.grantDetails : []) {
+      const remaining = Number(gd?.remainingAmount);
+      const expires = String(gd?.expiresDate || "");
+      if (!Number.isFinite(remaining) || remaining <= 0) continue;
+      out.push({ source, name, remaining, ...(expires ? { expires } : {}) });
+    }
+  }
+  return out;
+}
+
 // ── 每日登录积分（网页 Cookie）───────────────────────────────────────
 
 // 结果三种：{ granted: true, amount, balanceAfter } / { granted: false, already: true }
@@ -407,6 +440,7 @@ export const _internal = {
   loginByCookie,
   loginPageUrl,
   modelCatalog,
+  pointGrants,
   points,
   reusableProjectAk,
 };

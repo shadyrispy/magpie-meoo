@@ -680,7 +680,7 @@ export const MeooAuthPlugin = async (_ctx, _options = {}) => {
 //   · projectAk  项目 AK（调模型）；设备授权流程里尝试自动开通，失败可后补
 // 账号身份：userId 优先，退到 apiKey 指纹（uidOf 已按 access 全文哈希）。
 
-import { MeooError, dailyLogin, deviceSessionCreate, deviceSessionPoll, ensureProjectAk, expired, identity, loginByCookie, loginPageUrl, modelCatalog, points } from "./src/meoo.mjs"
+import { MeooError, dailyLogin, deviceSessionCreate, deviceSessionPoll, ensureProjectAk, expired, identity, loginByCookie, loginPageUrl, modelCatalog, pointGrants, points } from "./src/meoo.mjs"
 
 // access 字段是 JSON 文本 → 解析；坏了返回 null（调用方报 needsLogin）。
 function snapshotOf(auth) {
@@ -767,18 +767,40 @@ async function fetchUsage(auth, http = fetch) {
     identity(snap.apiKey, { cookie: snap.cookie }, http).catch(() => ({})),
   ]);
   const name = String(who?.username || who?.nickname || snap.username || snap.userId || "Meoo");
-  return {
-    plan: "Meoo",
-    user: name,
-    // 积分是钱包型余额（没有窗口上限）；拿不到就留空让卡片显示未知。
-    ...(available != null
-      ? { balance: `${available} 积分` }
-      : {}),
-    windows: [
+
+  // 有 Cookie 时按来源批次拆分（含过期点）——每日积分有效期 7 天，
+  // 订阅/邀请跟随周期，这些差别只有批次接口给。
+  let windows;
+  if (snap.cookie) {
+    try {
+      const grants = await pointGrants(snap.cookie, http);
+      if (grants.length) {
+        windows = grants.map((g) =>
+          usageWindow({
+            name: g.name,
+            balance: g.remaining,
+            unit: "积分",
+            ...(g.expires ? { runsOutAt: g.expires } : {}),
+          }),
+        );
+      }
+    } catch {
+      // 批次拿不到就退回总额（下面的兜底）
+    }
+  }
+  if (!windows) {
+    windows = [
       available != null
         ? usageWindow({ name: "积分", balance: available, unit: "积分" })
         : usageWindow({ name: "积分", used: 0, display: "余额未知" }),
-    ],
+    ];
+  }
+
+  return {
+    plan: "Meoo",
+    user: name,
+    ...(available != null ? { balance: `${available} 积分` } : {}),
+    windows,
   };
 }
 

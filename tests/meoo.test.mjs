@@ -232,3 +232,65 @@ test("loginByCookie：AK 建不了不挡登录（Cookie 照样入账，签到可
   assert.equal(t.apiKey, "")
   assert.equal(t.cookie, "SESSION=abc")
 })
+
+test("pointGrants：按来源批次解析剩余量与过期点（每日积分 7 天期）", async () => {
+  const net = serve([
+    ["/api/mc/entitlement/get", () => Response.json({
+      success: true,
+      data: { userPointInfo: { activeGrants: [
+        { sourceType: "SUBSCRIPTION", sourceTypeName: "订阅赠送积分", totalRemainingAmount: 5000,
+          grantDetails: [{ remainingAmount: 5000, expiresDate: "2026-12-15T00:00:00" }] },
+        { sourceType: "DAILY_LOGIN", sourceTypeName: "登录赠送积分", totalRemainingAmount: 1967,
+          grantDetails: [{ remainingAmount: 1967, expiresDate: "2026-11-21T23:59:59" }] },
+        { sourceType: "INVITE_REWARD", sourceTypeName: "邀请奖励积分", totalRemainingAmount: 0,
+          grantDetails: [{ remainingAmount: 0, expiresDate: "2026-12-15T23:59:59" }] },
+      ] } },
+    })],
+  ])
+  const grants = await meoo.pointGrants("sessionid=x", net.fetch)
+  assert.equal(grants.length, 2, "剩余 0 的批次不出现")
+  assert.equal(grants[0].source, "SUBSCRIPTION")
+  assert.equal(grants[1].name, "登录赠送积分")
+  assert.equal(grants[1].remaining, 1967)
+  assert.equal(grants[1].expires, "2026-11-21T23:59:59")
+})
+
+test("usage：有 Cookie 时按来源批次分窗（带 runsOutAt），无 Cookie 退回总额", async () => {
+  const net = serve([
+    ["/open/v1/cli-compat/account/points", () =>
+      Response.json({ success: true, data: { account: { availableBalance: 6967 } } })],
+    ["/open/v1/cli-compat/account/identity", () =>
+      Response.json({ success: true, data: { userId: "u-1", username: "tester" } })],
+    ["/api/mc/entitlement/get", () => Response.json({
+      success: true,
+      data: { userPointInfo: { activeGrants: [
+        { sourceType: "DAILY_LOGIN", sourceTypeName: "登录赠送积分", grantDetails: [{ remainingAmount: 1967, expiresDate: "2026-11-21T23:59:59" }] },
+        { sourceType: "SUBSCRIPTION", sourceTypeName: "订阅赠送积分", grantDetails: [{ remainingAmount: 5000, expiresDate: "2026-12-15T00:00:00" }] },
+      ] } },
+    })],
+  ])
+  const plugin = await MeooAuthPlugin({}, { fetchImpl: net.fetch })
+  const u = await plugin.auth.usage(
+    async () => ({ type: "oauth", access: snapshot({ cookie: "sessionid=x" }) }),
+    { id: "meoo" },
+  )
+  assert.equal(u.windows.length, 2)
+  assert.equal(u.windows[0].name, "登录赠送积分")
+  assert.equal(u.windows[0].balance, 1967)
+  assert.ok(u.windows[0].runsOutAt, "每日批次带过期点")
+  assert.ok(!JSON.stringify(u).includes("sessionid=x"), "Cookie 不出现在 usage 里")
+
+  // 无 Cookie → 总额兜底
+  const net2 = serve([
+    ["/open/v1/cli-compat/account/points", () =>
+      Response.json({ success: true, data: { account: { availableBalance: 5000 } } })],
+    ["/open/v1/cli-compat/account/identity", () => Response.json({ success: true, data: { userId: "u-2" } })],
+  ])
+  const plugin2 = await MeooAuthPlugin({}, { fetchImpl: net2.fetch })
+  const u2 = await plugin2.auth.usage(
+    async () => ({ type: "oauth", access: snapshot() }),
+    { id: "meoo" },
+  )
+  assert.equal(u2.windows.length, 1)
+  assert.equal(u2.windows[0].name, "积分")
+})
