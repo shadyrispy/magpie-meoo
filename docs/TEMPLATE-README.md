@@ -3,7 +3,7 @@
 一个可直接克隆的 magpie / OpenCode 供应商插件模板 —— **九项全实现，一项不缺**。
 
 > 克隆这个仓库，改三处配置，实现五个 TODO，就是一个标准 magpie 插件。
-> 然后**把它发出去** —— 那是另一套动作，见 [UPDATING.md](./UPDATING.md)：
+> 然后**把它发出去** —— 那是另一套动作，见 [UPDATING.md](../UPDATING.md)：
 > **分支 = 测试版通道**（`owner/repo#feat-x`），**`main` = 稳定版通道**（所有人）。
 > 测试版走分支，稳定版才进 `main` —— 这样分支上怎么折腾都不会把正在用的人炸了。
 
@@ -19,22 +19,22 @@
 > **0 号定顺序，1~3 号管「写出来」，4 号管「发出去」。** 4 号最容易被跳过 —— 跳过它的表现
 > 不是报错，是东西永远发不到用户手上。
 >
-> **AI 执行者从这里进**：[GUIDE.md](./GUIDE.md) —— 30 分钟主线，每步带官方锚点。
-> 卡在某条坑里再翻 [AGENTS.md](./AGENTS.md)（症状 → 判据 → 出处）。
+> **AI 执行者从这里进**：[GUIDE.md](../GUIDE.md) —— 30 分钟主线，每步带官方锚点。
+> 卡在某条坑里再翻 [AGENTS.md](../AGENTS.md)（症状 → 判据 → 出处）。
 
-**0. [GUIDE.md](./GUIDE.md) —— 说明书主线：30 分钟，从官方指导文件到 80 分插件。**
+**0. [GUIDE.md](../GUIDE.md) —— 说明书主线：30 分钟，从官方指导文件到 80 分插件。**
 这是**唯一一份按时间顺序写的**：拿到模板 → 改身份 → 写 config → 写 auth → 写 models →
 写 usage/checkin → 自检 → 打分 → 发布。每步都标了对应的官方锚点（如 `#provider` / `#signin`），
 并指向本仓库里讲细节的那一节。**第一次做插件，从这一份开始。**
 
-**1. [README-TEMPLATE.md](./README-TEMPLATE.md) —— 写插件介绍页的模板，照抄。**
+**1. [README-TEMPLATE.md](../README-TEMPLATE.md) —— 写插件介绍页的模板，照抄。**
 用户只看 README 决定装不装：开头给数字、功能一句一条、不踩别人、安装放最后、
 技术细节全进 `docs/internals.md`。**参考源是必填段** —— 用了别人的协议结论或实现思路，
 列出来（MIT 要求，也让读者知道依据）。
 **模型段写发行商，不写数量** —— `DeepSeek / GLM / GPT` 这样列，表格只留各家最新 / 热门，
 全量交给 `magpie plugin list`；数量跟着平台上下架变，写死必然过期。
 
-**2. [HOOKS.md](./HOOKS.md) —— 钩子契约。**
+**2. [HOOKS.md](../HOOKS.md) —— 钩子契约。**
 从 magpie 二进制里提取的 21 章，**字段级**：每个字段少写会怎样、写错会怎样。
 官方文档 [`usemagpie.ai/docs/plugins`](https://usemagpie.ai/docs/plugins) 讲**行为**，
 两者并用 —— 官方文档已经补上 `auth.checkin`（2026-10-26，v0.1.1582，见 [README 里那段](#一个曾经的缺口已经补上)），
@@ -42,11 +42,11 @@
 其中一条最容易错：**`usage` 的 `used` 是必填**，它不只画进度条，还是路由排序输入 ——
 漏了会被当成 0% = 满额，空号反而排到队首。
 
-**3. [MULTI-PROVIDER.md](./MULTI-PROVIDER.md) —— 同一厂商两套云，一个包放两个供应商。**
+**3. [MULTI-PROVIDER.md](../MULTI-PROVIDER.md) —— 同一厂商两套云，一个包放两个供应商。**
 国内版 / 国际版这种情形，做对了在 magpie 里是**两张卡、两组登录态**；做错了是
 登录态互相覆盖。判据、骨架、五条铁律、验证清单都在里面。**只有一个站点的插件不用读这份。**
 
-**4. [UPDATING.md](./UPDATING.md) —— 发版本，以及用户怎么拿到它。**
+**4. [UPDATING.md](../UPDATING.md) —— 发版本，以及用户怎么拿到它。**
 
 每次发版本**必读**，而且一步不能少：
 
@@ -56,7 +56,7 @@
 ```
 
 **禁止直接推默认分支。** 少了 PR + `rules` 门禁，坏提交会直接抵达 git 源用户；少了发布与验证，
-npm 用户又可能停在旧版或拿到未验包。发版前逐条过 [CHECKLIST.md](./CHECKLIST.md) 的 B 表。
+npm 用户又可能停在旧版或拿到未验包。发版前逐条过 [CHECKLIST.md](../CHECKLIST.md) 的 B 表。
 
 ---
 
@@ -71,7 +71,7 @@ npm 用户又可能停在旧版或拿到未验包。发版前逐条过 [CHECKLIS
 | `keywords` 含 `opencode` + `plugin`/`auth`/`provider` | 否则 npm 搜索找不到 |
 | 改代码要 bump `version` 再打包 | 同版本重打，bun 命中缓存（`no changes`），装了个寂寞 |
 
-细节见 [README-TEMPLATE.md](./README-TEMPLATE.md) 的「仓库里还该有什么」一节。
+细节见 [README-TEMPLATE.md](../README-TEMPLATE.md) 的「仓库里还该有什么」一节。
 
 ### 包名是 slug；显示名写 `magpie.name`
 
@@ -106,7 +106,7 @@ unrecognised dependency format: 爱派AiPy Trustoken
 ```
 
 `magpie.name` 不是依赖键，空格随便写；已有带空格 `name` 的安装按
-[UPDATING.md](./UPDATING.md) 的「旧版带空格依赖键」迁移。**不需要 `rm` + `add`，登录态不丢。**
+[UPDATING.md](../UPDATING.md) 的「旧版带空格依赖键」迁移。**不需要 `rm` + `add`，登录态不丢。**
 
 ⚠ **bun 只吃 ASCII 键**：中文键即使没有空格也报 `unrecognised dependency format`（实测 bun 1.4.4）。
 所以 `name` 必须 slug，这是硬约束，不是风格偏好。
@@ -148,15 +148,15 @@ CI 在功能分支与 PR 上跑合规、语义测试和 `npm pack --dry-run`（`
 
 ## 目录
 
-- [说明书主线](./GUIDE.md) —— **30 分钟，从官方指导文件到 80 分插件；第一次做插件从这份开始**
-- [在用插件回收记录](./RECYCLING.md) —— **17 个真实启用项、通用代码来源与择优/排除边界**
-- [官方引用索引](./OFFICIAL-SOURCES.md) —— **官方 22 个锚点逐条映射到本仓库；每条结论都能追到官方原文和版本**
-- [80 分评分卡](./SCORING.md) —— **100 分怎么算、80 分卡在哪、`node scripts/score.mjs` 一条命令跑出来**
-- [给 AI 的入口](./AGENTS.md) —— **按「你在哪一步」给阅读顺序，外加十几条静默出错的坑（症状→判据→出处）**
-- [交付清单](./CHECKLIST.md) —— **两张勾选表：代码交付前 / 发版前（check 脚本查不到的那部分）**
-- [写 README](./README-TEMPLATE.md) —— **插件介绍页的模板，照抄这份**
-- [更新途径](./UPDATING.md) —— **功能分支 + PR + `rules` 门禁、合并后受控发布，每次发版前必读**
-- [单插件多供应商](./MULTI-PROVIDER.md) —— **同一厂商两套云（国内/国际），一个包两个供应商**
+- [说明书主线](../GUIDE.md) —— **30 分钟，从官方指导文件到 80 分插件；第一次做插件从这份开始**
+- [在用插件回收记录](../RECYCLING.md) —— **17 个真实启用项、通用代码来源与择优/排除边界**
+- [官方引用索引](../OFFICIAL-SOURCES.md) —— **官方 22 个锚点逐条映射到本仓库；每条结论都能追到官方原文和版本**
+- [80 分评分卡](../SCORING.md) —— **100 分怎么算、80 分卡在哪、`node scripts/score.mjs` 一条命令跑出来**
+- [给 AI 的入口](../AGENTS.md) —— **按「你在哪一步」给阅读顺序，外加十几条静默出错的坑（症状→判据→出处）**
+- [交付清单](../CHECKLIST.md) —— **两张勾选表：代码交付前 / 发版前（check 脚本查不到的那部分）**
+- [写 README](../README-TEMPLATE.md) —— **插件介绍页的模板，照抄这份**
+- [更新途径](../UPDATING.md) —— **功能分支 + PR + `rules` 门禁、合并后受控发布，每次发版前必读**
+- [单插件多供应商](../MULTI-PROVIDER.md) —— **同一厂商两套云（国内/国际），一个包两个供应商**
 - [最小交付面](#最小交付面) —— 这个模板的设计原则
 - [magpie 是什么](#magpie-是什么)
 - [九项清单](#九项清单)
@@ -243,7 +243,7 @@ magpie 把每个插件加载进一个 Bun 进程（plugin host），通过 stdin
 | ⑨ | 登录返回的 `accountId` / `uid` | 卡片显示名 / 区分同名账号 |
 | | `auth.icon` 或 `magpie.icon` | 卡片图标 |
 | | `auth.maxConcurrency` 或 `magpie.maxConcurrency` | 并发数 |
-| | （没有字段）卡片上的「承载 X、Y」徽章 | magpie ≥ 0.1.1744 由插件**注册的 provider 名**派生；`magpie.carries` 从未发布过，别写。见 [MULTI-PROVIDER.md](MULTI-PROVIDER.md) 铁律 6 |
+| | （没有字段）卡片上的「承载 X、Y」徽章 | magpie ≥ 0.1.1744 由插件**注册的 provider 名**派生；`magpie.carries` 从未发布过，别写。见 [MULTI-PROVIDER.md](../MULTI-PROVIDER.md) 铁律 6 |
 
 ### 非钩子但必需
 
@@ -276,30 +276,30 @@ package.json    → 版本、许可证、repository 链接（卡片上自动显�
 
 ## 已经趟过的通用协议（直接抄，别从零推）
 
-这几块都是厂商无关的通用协议 / 原语，派生仓库直接用（来源与 MIT 归属见 [`NOTICE.md`](./NOTICE.md)）：
+这几块都是厂商无关的通用协议 / 原语，派生仓库直接用（来源与 MIT 归属见 [`NOTICE.md`](../NOTICE.md)）：
 
 | 模块 | 解决什么 | 一个必须知道的实测 |
 |---|---|---|
-| [`src/http.mjs`](./src/http.mjs) | 公共请求头、OpenAI 错误 Response、异构错误摘要、保守 401/403 判定、Retry-After | 401 纯模型错误不杀账号；403 只有明确登录文本才算 expired；429 等待钳制在 1–60 秒 |
-| [`src/status.mjs`](./src/status.mjs) | 400/422 的余额 / 超时(504) / 暂不可用(503) / 渠道 / 模型 / 限流分类与安全改写 | 只读 clone；200/SSE 原对象返回且零 pull；schema 与上下文过长不换号 |
-| [`src/credential.mjs`](./src/credential.mjs) | 凭据读取、SHA-256 指纹、种类识别与 uid | 种类顺序 cached → metadata → shape；不要按 `auth.type` 猜 Cookie 还是 API Key |
-| [`src/oauth-device.mjs`](./src/oauth-device.mjs) | RFC 8628 设备码申请、轮询、刷新 | `slow_down` 后续间隔 +5 秒；总预算取 maxWait/expires_in 较小值；网络失败不冒充登录失效 |
-| [`src/checkin.mjs`](./src/checkin.mjs) | 签到前后账单差集对账、一次性奖励防双计 | 没有 before 快照时保守 `done`，不能把历史账单算成本次新奖励 |
-| [`src/stream-reader.mjs`](./src/stream-reader.mjs) | 通用 reader 的空闲超时、abort、结束/错误重放 | 超时只摘除等待者；在飞 `read()` 的数据块必须排队，不能丢首块 |
-| [`src/refresh-lock.mjs`](./src/refresh-lock.mjs) | 一次性 refresh_token 的并发闸：同 key 合并 in-flight、成功回放 60 秒、失败不缓存 | 键必须是**凭据身份**（refresh_token / account），不能用 provider id —— 否则同渠道多账号会共享一次刷新结果 |
-| [`src/oauth-pkce.mjs`](./src/oauth-pkce.mjs) | OAuth 2.0 PKCE（S256）+ 本机 127.0.0.1 loopback 回调 | state 必须恰好出现一次且匹配；错误 path 404、错误 state 400 都**不结束**等待；超时 / abort / close 必须 reject |
-| [`src/model-context.mjs`](./src/model-context.mjs) | 查 magpie 自己的 `~/.cache/magpie/models.json` 拿真实上下文窗口 | 查不到返回调用方 fallback，否则 `undefined` —— **不猜**；填 256K 而实际 1M 会让 agent 提前压缩 |
-| [`src/models.mjs`](./src/models.mjs) | 模型过滤/降级、稳定 slug ↔ 上行 code、同 id 静态元数据合并 | 未知模型不继承第一条能力，也不把静态权限表补回 live 列表 |
-| [`src/openai-sse.mjs`](./src/openai-sse.mjs) | OpenAI 兼容 SSE 解析 / 非流折叠：CRLF、多行 data、BOM、`[DONE]`、UTF-8 跨块、32 MiB 上限 | 合并 tool_calls 分片并保留 usage；流末仍无名的调用不向外发送，整轮只有它时给 502 |
-| [`src/usage-cache.mjs`](./src/usage-cache.mjs) | 按凭据 key 缓存 `usage()`：成功 60 秒 / 失败 5 秒、同 key 并发合并、stale-while-revalidate | 旧成功值可立即返回并后台单飞刷新；失败保留 stale，无旧值时有界等待，不串账号 |
-| [`src/request-rewrite.mjs`](./src/request-rewrite.mjs) | JSON 请求体改写管道：identity 快路径、`ensureStreamUsage`、`clampMaxTokens`、`stripModelPrefix`、`stripHopHeaders` | 改 body 后不去掉 `content-length` / `content-encoding` 会截断/解码失败；工具 schema 的 `additionalProperties:false` 绝不能碰 |
-| [`src/tool-schema.mjs`](./src/tool-schema.mjs) | 工具名超长截断（保持唯一）+ 工具 schema 兼容改写（`additionalProperties` 非布尔→`true`、删 `items:{}`、`items` 子树摊平且不留空 `{}`） | **默认关闭、只作显式 adapter**：会放宽模型看到的工具约束；`request-rewrite.mjs` 的「工具 schema 不动」铁律不变，两者不要同时挂 |
-| [`src/rotation-captcha.mjs`](./src/rotation-captcha.mjs) | 旋转图片验证码：角度编码、WAF cookie、取图→判角→提交重试 | `/captcha/generate` 回的 `set-cookie: acw_tc=…` 必须带回 verify，否则 `2000 客户端信息不匹配`（Node fetch 默认没有 cookie 罐） |
-| [`src/vision-clock.mjs`](./src/vision-clock.mjs) | 让 magpie 设置里的识图模型判断「主体朝几点」 | `max_tokens=400` 会把推理答案饿死（`content:null`）；两个判官分歧 >1.5 钟点要换图，不能取平均 |
-| [`src/local-browser.mjs`](./src/local-browser.mjs) | 从本机浏览器 localStorage（LevelDB）读登录态 | 必须按 origin 截断：A 站的 jwt 配到 B 站的 org 就是「登录成功却拿错号」 |
-| [`src/browser-login.mjs`](./src/browser-login.mjs) | 受控 Chromium 登录：候选浏览器（含 360/QQ/搜狗等国产壳）+ CDP 抓 Cookie | Chrome/Edge 之外也得能选；Windows 注册表 App Paths 优先，退出码不可靠，以 CDP 端口连上为准 |
-| [`src/tempmail-client.mjs`](./src/tempmail-client.mjs) | 一次性邮箱建址 + 收验证码 | 域名有黑名单：`maxxspace.com` 会被部分上游拒，`yzcalo.com` / 常见邮箱域可过 —— 换厂商先用真实请求确认 |
-| [`src/catalog-union.mjs`](./src/catalog-union.mjs) | 两份模型目录合并：`catalogRows` 归一化、`isChatLike` 过滤非聊天行、`mergeCatalogs` 定主次 | 厂商的「客户端配置」更新慢、「控制台/网页」那份带完整元数据 —— 只读一份会让插件里的模型比网页上少几个、倍率还是旧的（坑 37） |
+| [`src/http.mjs`](../src/http.mjs) | 公共请求头、OpenAI 错误 Response、异构错误摘要、保守 401/403 判定、Retry-After | 401 纯模型错误不杀账号；403 只有明确登录文本才算 expired；429 等待钳制在 1–60 秒 |
+| [`src/status.mjs`](../src/status.mjs) | 400/422 的余额 / 超时(504) / 暂不可用(503) / 渠道 / 模型 / 限流分类与安全改写 | 只读 clone；200/SSE 原对象返回且零 pull；schema 与上下文过长不换号 |
+| [`src/credential.mjs`](../src/credential.mjs) | 凭据读取、SHA-256 指纹、种类识别与 uid | 种类顺序 cached → metadata → shape；不要按 `auth.type` 猜 Cookie 还是 API Key |
+| [`src/oauth-device.mjs`](../src/oauth-device.mjs) | RFC 8628 设备码申请、轮询、刷新 | `slow_down` 后续间隔 +5 秒；总预算取 maxWait/expires_in 较小值；网络失败不冒充登录失效 |
+| [`src/checkin.mjs`](../src/checkin.mjs) | 签到前后账单差集对账、一次性奖励防双计 | 没有 before 快照时保守 `done`，不能把历史账单算成本次新奖励 |
+| [`src/stream-reader.mjs`](../src/stream-reader.mjs) | 通用 reader 的空闲超时、abort、结束/错误重放 | 超时只摘除等待者；在飞 `read()` 的数据块必须排队，不能丢首块 |
+| [`src/refresh-lock.mjs`](../src/refresh-lock.mjs) | 一次性 refresh_token 的并发闸：同 key 合并 in-flight、成功回放 60 秒、失败不缓存 | 键必须是**凭据身份**（refresh_token / account），不能用 provider id —— 否则同渠道多账号会共享一次刷新结果 |
+| [`src/oauth-pkce.mjs`](../src/oauth-pkce.mjs) | OAuth 2.0 PKCE（S256）+ 本机 127.0.0.1 loopback 回调 | state 必须恰好出现一次且匹配；错误 path 404、错误 state 400 都**不结束**等待；超时 / abort / close 必须 reject |
+| [`src/model-context.mjs`](../src/model-context.mjs) | 查 magpie 自己的 `~/.cache/magpie/models.json` 拿真实上下文窗口 | 查不到返回调用方 fallback，否则 `undefined` —— **不猜**；填 256K 而实际 1M 会让 agent 提前压缩 |
+| [`src/models.mjs`](../src/models.mjs) | 模型过滤/降级、稳定 slug ↔ 上行 code、同 id 静态元数据合并 | 未知模型不继承第一条能力，也不把静态权限表补回 live 列表 |
+| [`src/openai-sse.mjs`](../src/openai-sse.mjs) | OpenAI 兼容 SSE 解析 / 非流折叠：CRLF、多行 data、BOM、`[DONE]`、UTF-8 跨块、32 MiB 上限 | 合并 tool_calls 分片并保留 usage；流末仍无名的调用不向外发送，整轮只有它时给 502 |
+| [`src/usage-cache.mjs`](../src/usage-cache.mjs) | 按凭据 key 缓存 `usage()`：成功 60 秒 / 失败 5 秒、同 key 并发合并、stale-while-revalidate | 旧成功值可立即返回并后台单飞刷新；失败保留 stale，无旧值时有界等待，不串账号 |
+| [`src/request-rewrite.mjs`](../src/request-rewrite.mjs) | JSON 请求体改写管道：identity 快路径、`ensureStreamUsage`、`clampMaxTokens`、`stripModelPrefix`、`stripHopHeaders` | 改 body 后不去掉 `content-length` / `content-encoding` 会截断/解码失败；工具 schema 的 `additionalProperties:false` 绝不能碰 |
+| [`src/tool-schema.mjs`](../src/tool-schema.mjs) | 工具名超长截断（保持唯一）+ 工具 schema 兼容改写（`additionalProperties` 非布尔→`true`、删 `items:{}`、`items` 子树摊平且不留空 `{}`） | **默认关闭、只作显式 adapter**：会放宽模型看到的工具约束；`request-rewrite.mjs` 的「工具 schema 不动」铁律不变，两者不要同时挂 |
+| [`src/rotation-captcha.mjs`](../src/rotation-captcha.mjs) | 旋转图片验证码：角度编码、WAF cookie、取图→判角→提交重试 | `/captcha/generate` 回的 `set-cookie: acw_tc=…` 必须带回 verify，否则 `2000 客户端信息不匹配`（Node fetch 默认没有 cookie 罐） |
+| [`src/vision-clock.mjs`](../src/vision-clock.mjs) | 让 magpie 设置里的识图模型判断「主体朝几点」 | `max_tokens=400` 会把推理答案饿死（`content:null`）；两个判官分歧 >1.5 钟点要换图，不能取平均 |
+| [`src/local-browser.mjs`](../src/local-browser.mjs) | 从本机浏览器 localStorage（LevelDB）读登录态 | 必须按 origin 截断：A 站的 jwt 配到 B 站的 org 就是「登录成功却拿错号」 |
+| [`src/browser-login.mjs`](../src/browser-login.mjs) | 受控 Chromium 登录：候选浏览器（含 360/QQ/搜狗等国产壳）+ CDP 抓 Cookie | Chrome/Edge 之外也得能选；Windows 注册表 App Paths 优先，退出码不可靠，以 CDP 端口连上为准 |
+| [`src/tempmail-client.mjs`](../src/tempmail-client.mjs) | 一次性邮箱建址 + 收验证码 | 域名有黑名单：`maxxspace.com` 会被部分上游拒，`yzcalo.com` / 常见邮箱域可过 —— 换厂商先用真实请求确认 |
+| [`src/catalog-union.mjs`](../src/catalog-union.mjs) | 两份模型目录合并：`catalogRows` 归一化、`isChatLike` 过滤非聊天行、`mergeCatalogs` 定主次 | 厂商的「客户端配置」更新慢、「控制台/网页」那份带完整元数据 —— 只读一份会让插件里的模型比网页上少几个、倍率还是旧的（坑 37） |
 
 表里的模块都有 `tests/*.test.mjs` 语义锁，`node --test` 全跑，照着测就能改。
 
@@ -391,7 +391,7 @@ rm -rf .git && git init    # 换掉历史
 ### 方式三：一条命令生成（身份自动改对）
 
 ```bash
-npx --yes github:MYCF711/magpie-plugin-scaffold#v0.3.13 create \
+npx --yes github:MYCF711/magpie-plugin-scaffold#v0.1.0 create \
   --dir my-provider \
   --provider huawei \
   --name "华为云 HUAWEI" \
@@ -418,13 +418,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: MYCF711/magpie-plugin-scaffold/.github/actions/check@v0.3.13
+      - uses: MYCF711/magpie-plugin-scaffold/.github/actions/check@v0.1.0
         with:
           target: .
 ```
 
 这个复合动作直接跑动作仓库里的 `scripts/check.mjs`，不下载 npm 包、不装依赖、不写你的目录。
-本地等价命令：`npx --yes github:MYCF711/magpie-plugin-scaffold#v0.3.13 check .`。
+本地等价命令：`npx --yes github:MYCF711/magpie-plugin-scaffold#v0.1.0 check .`。
 上面引用里的 tag 是写这份文档时的最新 Release；固定 tag 能让行为可复现，
 想跟随最新可以换成 `#main`（Action 的 `@main` 同理，但固定 tag 更安全）。
 
@@ -871,13 +871,13 @@ git 安装时，`gitName()` 反查的**依赖键同时是 `node_modules` 下的�
 unrecognised dependency format: 爱派AiPy Trustoken
 ```
 
-已有带空格依赖键的安装按 [UPDATING.md](./UPDATING.md) 的「旧版带空格依赖键」迁移：
+已有带空格依赖键的安装按 [UPDATING.md](../UPDATING.md) 的「旧版带空格依赖键」迁移：
 把依赖键/目录/lock 改成 slug，加上 `magpie.name`；**不用 `rm` + `add`，登录态不丢**。
 
 ⚠ **`magpie plugin add` / `update` 会把键名改回包自己的 `name`（slug）。** 手改键名不是永久的；
 正路是包内 `name` 用 slug、显示名放 `magpie.name`。
 
-完整说明见 [HOOKS.md](./HOOKS.md) 的「九之二、插件名」。
+完整说明见 [HOOKS.md](../HOOKS.md) 的「九之二、插件名」。
 
 ### 8. 已安装卡片只显示版本和 README
 
@@ -916,7 +916,7 @@ npm run publish:npm
    Name `NPM_TOKEN`，Value 粘 token。
 3. 推 tag 或手动跑 `release.yml`，npm 日志必须看到 `+ <包名>@<版本>`。
 
-细节见 [UPDATING.md](./UPDATING.md) 的「NPM_TOKEN：CI 发布不能假绿」。
+细节见 [UPDATING.md](../UPDATING.md) 的「NPM_TOKEN：CI 发布不能假绿」。
 
 **已经手工发过 npm 后重跑 workflow 是安全的**：`release.yml` 会先 `npm view` 同版本；
 已存在就 `already published, skipping` + `exit 0`（保持绿），不会再 E409。
@@ -975,7 +975,7 @@ agent       @magpie-community/agent-<name>
 ### 之后每一次更新
 
 上面讲的是**第一次**发出去。后面每发一个版本，照
-[UPDATING.md](./UPDATING.md) 走 —— 那份只讲「之后」：
+[UPDATING.md](../UPDATING.md) 走 —— 那份只讲「之后」：
 
 - magpie 怎么发现新版本（npm 源比 `version`、git 源比默认分支 HEAD 的 commit，
   **两条路都不看 GitHub Release / tag**）
@@ -986,7 +986,7 @@ agent       @magpie-community/agent-<name>
   重置成包内 `name`，所以显示名必须写在仓库里）
 
 > ⚠ 直接推默认分支会把未验证代码交给 git 源用户；只推代码不打 tag / 不发 npm，
-> 又会让版本状态彼此错位。逐条过 [CHECKLIST.md](./CHECKLIST.md) 的 B 表，
+> 又会让版本状态彼此错位。逐条过 [CHECKLIST.md](../CHECKLIST.md) 的 B 表，
 > 并把 GitHub 的「Require a pull request」与 `rules` 检查都打开，才算有发布门。
 
 ---
