@@ -1,0 +1,11 @@
+{
+  "package": "meoo-auth",
+  "name": "秒悟 Meoo",
+  "providers": [
+    "meoo"
+  ],
+  "summary": {
+    "en": "Meoo (秒悟) provider plugin: browser Cookie sign-in, points balance, daily login credits (check-in), and an OpenAI-compatible model gateway proxy.",
+    "zh": "秒悟 Meoo 供应商插件：浏览器 Cookie 登录、积分余额、每日登录积分（签到）与 OpenAI 兼容模型网关反代。"
+  }
+}
