@@ -19,20 +19,33 @@ Meoo（秒悟）官方模型网关的 magpie / OpenCode 供应商插件：设备
 
 ## 模型与费率（官方 pricing.md，每 1k tokens 扣积分）
 
-| 模型 | 输入 | 输出 | 缓存命中 |
-|---|---|---|---|
-| Qwen3.8-Flash（默认） | 0.8 | 2.7 | 0.1 |
-| Qwen3.7-Plus（限时八折） | 1.6 | 6.4 | 0.16 |
-| DeepSeek V4.1 Flash | 2 | 8 | 0.2 |
-| DeepSeek V4 Flash | 3 | 9 | 0.3 |
-| Qwen3.7-Max（限时五折） | 6 | 18 | 0.6 |
-| Qwen3.8-Max | 12 | 36 | 1 |
-| Qwen4-Max-Preview | 12 | 36 | 1 |
-| DeepSeek V4 Pro | 9 | 27 | 0.9 |
-| GLM-5.3-Flash | 0.4 | 1.4 | 0.115 |
-| GLM-5.2 | 8 | 28 | 2 |
+### API 网关实际可调（`/models` 实时白名单，2026-11-15 实测）
 
-（另有 Kimi K3.1 Pro / Kimi-K3 / MiniMax M3.1 Flash / GLM-5.3 / GLM-5.2-Fast 见官方文档；网关实时目录以 `models` 端点为准，当前账号可调 10 个。）
+| 模型 | 输入 | 输出 | 缓存命中 | 上下文 | 实测延迟* | 备注 |
+|---|---|---|---|---|---|---|
+| Qwen3.8-Flash（默认） | 0.8 | 2.7 | 0.1 | 1M | 5.3s | 工具调用 ✅；思考 token 计输出费 |
+| Qwen3.7-Plus（限时八折） | 1.6 | 6.4 | 0.16 | 262K | 1.7s | 性价比好 |
+| DeepSeek V4.1 Flash | 2 | 8 | 0.2 | 1M | 1.2s | 实测最快 |
+| DeepSeek V4 Flash | 3 | 9 | 0.3 | 1M | 2.5s | |
+| Qwen3.7-Max（限时五折） | 6 | 18 | 0.6 | 262K | 1.5s | |
+| DeepSeek V4 Pro | 9 | 27 | 0.9 | 1M | 2.4s | 最大输出 384K |
+| Qwen3.8-Max | 12 | 36 | 1 | 1M | 2.1s | |
+| GLM-5.2-Fast-Preview | 16 | 56 | 4 | 1M | 4.0s | 最贵档 |
+| GLM-5.2 | 8 | 28 | 2 | 1M | 4.4s | |
+
+\* 延迟为「回答一个字」小请求实测，仅供参考。
+
+**计费规则（两轮 13 次请求实测，误差 0）**：每条请求按 tokens × 费率计算后**逐条向上取整到整数积分**；思考 token（`reasoning_tokens`）计入输出费。
+
+### 费率表里有、但 API 调不了的（勿选）
+
+| 模型 | 状态 |
+|---|---|
+| Qwen4-Max-Preview | ❌ **403 Access denied** —— 在目录里但当前账号档位无权调用（实测） |
+| GLM-5.3-Flash / GLM-5.3 | ❌ **MODEL_NOT_SUPPORTED** —— 仅网页版可用，API 网关白名单没有（上游明确返回"当前仅支持配置模型: …"） |
+| Kimi K3.1 Pro / Kimi-K3 / MiniMax M3.1 Flash | 未进 API 白名单（同上，仅网页版） |
+
+插件会以 `/models` 实时目录为准；上游放开新模型时自动跟上。
 
 ## 签到的重要说明
 
