@@ -256,7 +256,9 @@ export const MeooAuthPlugin = async (_ctx, _options = {}) => {
               "在打开的浏览器里登录 Meoo（手机号/支付宝等），登录成功后本窗口自动继续。" +
               "Cookie 会自动取回并完成全部登录；若自动开浏览器失败，改用「粘贴」方式。",
             method: "auto",
-            opened: false, // chromiumLogin 自己开浏览器，magpie 不用再开
+            // true = 插件自己开了受控浏览器（chromiumLogin 会 spawn Chrome），
+            // magpie 不要再用系统默认浏览器打开 url —— 否则 Chrome + Safari 双开。
+            opened: true,
 
             async callback(_input, { signal } = {}) {
               const { findBrowser, chromiumLogin } = await import("./src/browser-login.mjs");
