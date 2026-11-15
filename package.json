@@ -1,6 +1,6 @@
 {
   "name": "meoo-auth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Meoo (秒悟) provider plugin for magpie / OpenCode: device-flow sign-in, points balance, daily login credits (check-in) and an OpenAI-compatible gateway proxy.",
   "type": "module",
   "main": "./index.mjs",
