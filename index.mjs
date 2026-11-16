@@ -780,6 +780,8 @@ async function fetchUsage(auth, http = fetch) {
             name: g.name,
             balance: g.remaining,
             unit: "积分",
+            // pointGrants 已把上游的北京时间无时区串转成带 Z 的 ISO，
+            // 这里原样交给 usageWindow 即可。
             ...(g.expires ? { runsOutAt: g.expires } : {}),
           }),
         );

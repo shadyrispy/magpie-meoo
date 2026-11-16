@@ -145,6 +145,22 @@ export async function points(ak, fetchImpl = fetch) {
   return Number.isFinite(value) ? value : null;
 }
 
+// 上游给的是**北京时间无时区**字符串（`2026-12-15T00:00:00`）。必须显式按 +08:00
+// 解析：交给 `new Date()` 会被宿主本地时区吃掉 —— UTC 机器上会差 8 小时，
+// 而「哪天过期」直接决定 expiring 调度谁先上，不能靠碰运气。
+const CN_OFFSET = "+08:00";
+function cnIso(value) {
+  const s = String(value || "").trim();
+  if (!s) return "";
+  // 已带时区（Z / ±HH:MM）就原样交给 Date
+  if (/(?:Z|[+-]\d{2}:?\d{2})$/i.test(s)) {
+    const d = new Date(s);
+    return Number.isNaN(d.getTime()) ? "" : d.toISOString();
+  }
+  const d = new Date(`${s}${CN_OFFSET}`);
+  return Number.isNaN(d.getTime()) ? "" : d.toISOString();
+}
+
 // 积分批次明细（网页 Cookie）：`GET /api/mc/entitlement/get` 的
 // userPointInfo.activeGrants 按来源分类（SUBSCRIPTION / DAILY_LOGIN /
 // INVITE_REWARD…），每类下 grantDetails[] 给剩余量与 expiresDate。
@@ -170,7 +186,7 @@ export async function pointGrants(cookie, fetchImpl = fetch) {
     const name = String(g?.sourceTypeName || source);
     for (const gd of Array.isArray(g?.grantDetails) ? g.grantDetails : []) {
       const remaining = Number(gd?.remainingAmount);
-      const expires = String(gd?.expiresDate || "");
+      const expires = cnIso(gd?.expiresDate);
       if (!Number.isFinite(remaining) || remaining <= 0) continue;
       out.push({ source, name, remaining, ...(expires ? { expires } : {}) });
     }

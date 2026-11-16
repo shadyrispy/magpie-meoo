@@ -252,7 +252,9 @@ test("pointGrants：按来源批次解析剩余量与过期点（每日积分 7 
   assert.equal(grants[0].source, "SUBSCRIPTION")
   assert.equal(grants[1].name, "登录赠送积分")
   assert.equal(grants[1].remaining, 1967)
-  assert.equal(grants[1].expires, "2026-11-21T23:59:59")
+  // 上游给北京时间无时区串，必须按 +08:00 解析成带 Z 的 ISO
+  // （2026-11-21T23:59:59 北京 = 2026-11-21T15:59:59Z），不能靠宿主本地时区。
+  assert.equal(grants[1].expires, "2026-11-21T15:59:59.000Z")
 })
 
 test("usage：有 Cookie 时按来源批次分窗（带 runsOutAt），无 Cookie 退回总额", async () => {
@@ -293,4 +295,26 @@ test("usage：有 Cookie 时按来源批次分窗（带 runsOutAt），无 Cooki
   )
   assert.equal(u2.windows.length, 1)
   assert.equal(u2.windows[0].name, "积分")
+})
+
+test("pointGrants：时区无关（无 zone 的北京时间串按 +08:00 解析，不受宿主时区影响）", async () => {
+  const net = serve([
+    ["/api/mc/entitlement/get", () => Response.json({
+      success: true,
+      data: { userPointInfo: { activeGrants: [
+        { sourceType: "SUBSCRIPTION", sourceTypeName: "订阅赠送积分",
+          grantDetails: [{ remainingAmount: 5000, expiresDate: "2026-12-15T00:00:00" }] },
+        { sourceType: "INVITE_REWARD", sourceTypeName: "邀请奖励积分",
+          grantDetails: [{ remainingAmount: 100, expiresDate: "2026-12-15T23:59:59.000" }] },
+        { sourceType: "DAILY_LOGIN", sourceTypeName: "登录赠送积分",
+          grantDetails: [{ remainingAmount: 200, expiresDate: "2026-11-22T08:00:00Z" }] },
+      ] } },
+    })],
+  ])
+  const grants = await meoo.pointGrants("sessionid=x", net.fetch)
+  // 北京 2026-12-15 00:00 → UTC 2026-12-14T16:00:00Z（与宿主时区无关）
+  assert.equal(grants[0].expires, "2026-12-14T16:00:00.000Z")
+  assert.equal(grants[1].expires, "2026-12-15T15:59:59.000Z")
+  // 已带 Z 的原样保留
+  assert.equal(grants[2].expires, "2026-11-22T08:00:00.000Z")
 })
