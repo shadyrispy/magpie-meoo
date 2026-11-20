@@ -93,8 +93,9 @@ const MODELS = [
   ["qwen3.8-max", "Qwen3.8 Max", 1_000_000, 65_536, 12, 36, 1, true, false],
   ["qwen3.7-max", "Qwen3.7 Max", 262_144, 65_536, 6, 18, 0.6, false, true],
   ["qwen3.7-plus", "Qwen3.7 Plus", 262_144, 65_536, 1.6, 6.4, 0.16, true, false],
-  // qwen4-max-preview 不进表：目录里有但实测 403 Access denied（当前账号档位无权），
-  // 放进来会被路由选中然后失败。上游放开权限后随实时目录自动出现。
+  // qwen4-max-preview 不进表：实测 403 Access denied，且上游已把它换成 qwen4-max
+  // （2026-11-20 白名单实测）。kimi 系同期也被移出白名单（kimi-k3.1-pro 等请求
+  // 回 MODEL_NOT_SUPPORTED），不再出现在表里。上游再放开时随实时目录自动出现。
   ["deepseek-v4.1-flash-1017", "DeepSeek V4.1 Flash", 1_000_000, 65_536, 2, 8, 0.2, true, false],
   ["deepseek-v4-pro-0813", "DeepSeek V4 Pro", 1_000_000, 384_000, 9, 27, 0.9, false, true],
   ["deepseek-v4-flash-0731", "DeepSeek V4 Flash", 1_000_000, 384_000, 3, 9, 0.3, false, true],

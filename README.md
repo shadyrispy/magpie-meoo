@@ -37,6 +37,8 @@ Meoo（秒悟）官方模型网关的 magpie / OpenCode 供应商插件：设备
 
 **计费规则（两轮 13 次请求实测，误差 0）**：每条请求按 tokens × 费率计算后**逐条向上取整到整数积分**；思考 token（`reasoning_tokens`）计入输出费。
 
+**2026-11-20 白名单变更实测**：`qwen4-max-preview` 改名为 `qwen4-max`；**Kimi K3 / K3.1-Pro 系被移出**（请求回 `MODEL_NOT_SUPPORTED`）。
+
 ### 费率表里有、但 API 调不了的（勿选）
 
 | 模型 | 状态 |
